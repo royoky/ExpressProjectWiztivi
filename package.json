@@ -20,5 +20,8 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   }
 }
