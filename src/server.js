@@ -3,15 +3,32 @@ import express from 'express'
 import fs from 'fs'
 const app = express()
 
+//routes
+//-------------------------------------------------------------------------
+/* const headerMiddleware = (req, res, newt) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081")
+    next()
+} */
 
-app.get('/ping', (req, res) => {
-    /*     res
-            .status(200)
-            //.setHeader('content-type', 'text/html')
-        res.send('pong') */
-    readJSONFile('public/data/moviesTab.json', (err, json) => {
+// app.use must be placed at the beginning (before using app.get)
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081")
+    next()
+})
+
+app.use((req, res, next) => {
+    setTimeout(next, 3000) // Simplified version of setTimeout, to avoid creating an empty function that calls "next" function
+/*     setTimeout(() => {
+        next()
+    }, 3000) */
+})
+
+
+app.get('/movies',
+    (req, res) => {
+        readJSONFile('public/data/moviesTab.json', (err, json) => {
         if (err) { throw err; }
-        //console.log(json);
+        //console.log(json);        
         res.json(json)
     })
 })
