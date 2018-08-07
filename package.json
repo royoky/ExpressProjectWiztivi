@@ -1,0 +1,24 @@
+{
+  "name": "express-project-wiztivi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/royoky/ExpressProjectWiztivi.git"
+  },
+  "author": "Ronan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/royoky/ExpressProjectWiztivi/issues"
+  },
+  "homepage": "https://github.com/royoky/ExpressProjectWiztivi#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.18.3"
+  }
+}
