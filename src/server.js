@@ -23,15 +23,38 @@ app.use((req, res, next) => {
     }, 3000) */
 })
 
-
 app.get('/movies',
     (req, res) => {
-        readJSONFile('public/data/moviesTab.json', (err, json) => {
+        readJSONFile('public/data/moviesTab.json', (err, movies) => {
         if (err) { throw err; }
         //console.log(json);        
-        res.json(json)
+        const filteredMovies = movies.map(movie => {
+            return {
+                title: movie.title,
+                poster: movie.poster,
+                alt: movie.alt,
+                id: movie.id
+            }
+        })
+        res.json(filteredMovies)
     })
 })
+
+app.get('/movie/:id',
+    (req, res) => {
+        //console.log(req.params.id)
+        readJSONFile('public/data/moviesTab.json', (err, movies) => {
+        if (err) { throw err; }
+        //console.log(json);        
+        const selectedMovie = movies.find (movie => {
+            //console.log(movie)
+            return movie.id === req.params.id
+        })
+        //console.log(selectedMovie)
+        res.send(selectedMovie)
+    })
+})
+
 /**
  * 
  * @param {*} filename 
@@ -52,4 +75,3 @@ function readJSONFile(filename, callback) {
 }
 
 app.listen(5000)
-
