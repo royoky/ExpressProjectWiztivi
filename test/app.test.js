@@ -48,7 +48,7 @@ describe('GET /movie/:id', () => {
     })
 })
 
-describe('POST /MovieForm', () => {
+describe('POST /MovieForm/:id?', () => {
     it('should display error messages', done => {
         supertest(app)
         .post('/MovieForm')
@@ -65,19 +65,72 @@ describe('POST /MovieForm', () => {
         .post('/MovieForm')
         .send({
             "title": "Inception",
-            "poster": "https://www.imdb.com/title/tt1375666/mediaviewer/rm3426651392?ref_=tt_ov_i",
+            "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg",
             "alt": "Inception",
             "link": "https://www.imdb.com/title/tt1375666/mediaviewer/rm3426651392?ref_=tt_ov_i",
-            "synopsis": "A thief who steals corporate secrets through \
-            the use of dream-sharing technology is given the inverse task \
-            of planting an idea into the mind of a CEO.",
+            "synopsis": "A thief who steals corporate secrets through "+
+            "the use of dream-sharing technology is given the inverse task "+
+            "of planting an idea into the mind of a CEO.",
             })
         .expect(200)
         .expect(({ body }) => {
             should.exist(body)
             console.log(body)
-            //body.id.should.be.above(0)
         })
         .end(done)
+    })
+    it('should update a movie', done => {
+        supertest(app)
+        .post('/MovieForm/3')
+        .send({
+            "title": "Inception",
+            "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg",
+            "alt": "Inception",
+            "link": "https://www.imdb.com/title/tt1375666/mediaviewer/rm3426651392?ref_=tt_ov_i",
+            "synopsis": "A thief who steals corporate secrets through "+
+            "the use of dream-sharing technology is given the inverse task "+
+            "of planting an idea into the mind of a CEO.",
+            "id":"3"
+            })
+        .expect(200)
+        .expect(({ body }) => {
+            should.exist(body)
+            console.log(body)
+        })
+        .end(done)
+    })
+    it('should send a 404 error', done => {
+        supertest(app)
+        .post('/MovieForm/150')
+        .send({
+            "title": "Inception",
+            "poster": "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg",
+            "alt": "Inception",
+            "link": "https://www.imdb.com/title/tt1375666/mediaviewer/rm3426651392?ref_=tt_ov_i",
+            "synopsis": "A thief who steals corporate secrets through "+
+            "the use of dream-sharing technology is given the inverse task "+
+            "of planting an idea into the mind of a CEO.",
+            "id":"150"
+            })
+        .expect(404)
+        .expect(({ body }) => {
+            should.exist(body)
+            console.log(body)
+        })
+        .end(done)
+    })
+})
+
+describe('DELETE /movie/:id', () => {
+    it('should delete a movie', done => {
+        supertest(app)
+        .delete('/movie/3')
+        .expect(204)
+        .end(() => {
+            supertest(app)
+            .get('/movie/3')
+            .expect(404)
+            .end(done)
+        })
     })
 })

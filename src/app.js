@@ -16,6 +16,7 @@ const app = express()
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081")
     res.setHeader("Access-Control-Allow-Headers", "content-type")
+    res.setHeader("Access-Control-Allow-Methods", "DELETE")
     next()
 })
 
@@ -50,65 +51,64 @@ app.get('/movies',
 // Get movie descritpion
 app.get('/movie/:id',
     (req, res) => {
-        //console.log(req.params.id)
         readJSONFile(config.get('jsonFile'), (err, movies) => {
-        if (err) { throw err; }
-        //console.log(json);        
+        if (err) { throw err; }       
         const selectedMovie = movies.find (movie => {
-            //console.log(movie)
             return movie.id === req.params.id
         })
         if (!selectedMovie) {return res.status(404).send('Movie not found')}
-        //console.log(selectedMovie)
-        res.send(selectedMovie)
-    })
-})
-/// Get movie poster
-app.get('/movie/:',
-    (req, res) => {
-        //console.log(req.params.id)
-        readJSONFile(config.get('jsonFile'), (err, movies) => {
-        if (err) { throw err; }
-        //console.log(json);        
-        const selectedMovie = movies.find (movie => {
-            //console.log(movie)
-            return movie.id === req.params.id
-        })
-        //console.log(selectedMovie)
         res.send(selectedMovie)
     })
 })
 
-app.post('/MovieForm', (req, res) => {
-        const newMovie = req.body
-        const errorMessages = []
-        let data
-        let newMovies
-        data = fs.readFileSync(config.get('jsonFile'))
-        newMovies = JSON.parse(data)
+app.post('/MovieForm/:id?', (req, res) => {
+    const newMovie = req.body
+    const errorMessages = []
+    let data = fs.readFileSync(config.get('jsonFile'))
+    let newMovies = JSON.parse(data)
 
-        function validateField (field, msg) {
-            if (!field || field.trim().length === 0) { errorMessages.push(msg) }
-        }
-        
-        try {
-            validateField(newMovie.title, 'Title field is mandatory')
-            validateField(newMovie.poster, 'Image field is mandatory')
-            validateField(newMovie.link, 'Link field is mandatory')
-            validateField(newMovie.synopsis, 'Synopsis field is mandatory')
-            if (errorMessages.length > 0) return res.status(400).send(errorMessages)    
-            /* if (/^ *$/.test(newMovie.title)) {                
-                errorMessage[0] = "Title field is mandatory"
-                res.status(400).send(errorMessage)
-                return
-            } */
+    function validateField (field, msg) {
+        if (!field || field.trim().length === 0) { errorMessages.push(msg) }
+    }
+
+    try {
+        validateField(newMovie.title, 'Title field is mandatory')
+        validateField(newMovie.poster, 'Image field is mandatory')
+        validateField(newMovie.link, 'Link field is mandatory')
+        validateField(newMovie.synopsis, 'Synopsis field is mandatory')
+        if (errorMessages.length > 0) return res.status(400).send(errorMessages)    
+
+        if(!req.params.id){
             newMovie.id = Date.now().toString
             newMovies.push(newMovie)
-            fs.writeFileSync(config.get('jsonFile'), JSON.stringify(newMovies))
-        } catch (error) {console.log(error)}
+        } else {
+            const ind = newMovies.findIndex (movie => {
+                return movie.id === req.params.id
+            })
+            if (ind === -1) return res.status(404).send(`No existing movie with the id ${req.params.id}`)
+            newMovies.splice(ind, 1, newMovie)
+        }
+        fs.writeFileSync(config.get('jsonFile'), JSON.stringify(newMovies))
+    } catch (error) {console.log(error)}
 
-        res.send(newMovie)
+    res.send(newMovie)
 })
+
+// Delete a movie
+//--------------------------------------------------------------------------------------
+app.delete('/movie/:id',
+    (req, res) => {
+        let data = fs.readFileSync(config.get('jsonFile'))
+        let movies = JSON.parse(data)
+        try {
+            const selectedMovie = movies.find(movie => { return movie.id === req.params.id })
+            const ind = movies.indexOf(selectedMovie)
+            movies.splice(ind, 1)
+            fs.writeFileSync(config.get('jsonFile'), JSON.stringify(movies))
+        } catch (error) { console.log(error) }
+
+        res.send(movies)
+    })
 
 /**
  * 
