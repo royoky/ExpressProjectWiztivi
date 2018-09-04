@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  mongo-dev:
+    image: mongo:3.7-jessie
+    container_name: wiztivi-db-dev
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db-dev:/data/db
+  mongo-test:
+    image: mongo:3.7-jessie
+    container_name: wiztivi-db-test
+    ports:
+      - 27018:27017
+    volumes:
+      - ./db-test:/data/db

@@ -1,4 +1,4 @@
 module.exports = {
-    timeout: 2000,
+    timeout: 1000,
     jsonFile: 'public/data/moviesTab.json'
 }
