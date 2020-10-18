@@ -17,7 +17,7 @@ const io = socketio(5010)
 
 // app.use must be placed at the beginning (before using app.get)
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8081")
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080")
     res.setHeader("Access-Control-Allow-Headers", "content-type")
     res.setHeader("Access-Control-Allow-Methods", "DELETE")
     next()
